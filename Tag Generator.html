@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tag Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'SF Pro Display', sans-serif;
+        }
+        .tag-container {
+            position: relative;
+            width: fit-content;
+            margin: 0 auto;
+            display: inline-block;
+            transform-origin: center;
+            transform: scale(0.6);
+        }
+        #tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 104px;
+            padding-top: 63px;
+            padding-bottom: 63px;
+            border-radius: 83px;
+            font-size: 100pt;
+            color: #666666;
+            white-space: nowrap;
+            font-weight: 700;
+            height: 232px;
+            box-sizing: border-box;
+            background-color: #f0f3f4;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 0;
+            position: relative;
+        }
+        #textInput {
+            font-family: 'SF Pro Display', sans-serif;
+            width: 320px;
+            padding: 14px 18px;
+            font-size: 18px;
+            border-radius: 83px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.06);
+            color: #666666;
+            margin-bottom: 14px;
+            transition:  box-shadow 0.2s ease;
+        }
+
+        #textInput:hover,
+        #textInput:focus {
+             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+
+
+        .bg-white {
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .text-center {
+            text-align: center;
+        }
+        label {
+            font-family: 'SF Pro Display', sans-serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 14px;
+        }
+        .mb-2 {
+            margin-bottom: 8px;
+        }
+        #color-select {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #ccc;
+            transition: border-color 0.2s ease,  transform 0.2s ease;
+        }
+
+        .color-option:hover {
+            border-color: #666666;
+            transform: translateY(-2px);
+             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .color-option:active {
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+
+        .color-option.selected {
+            border-color: #666666;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+        #exportButton {
+            position: absolute;
+            bottom: 8px;
+            right: -80px;
+            padding: 0;
+            width: 66.66666666667px;
+            height: 66.66666666667px;
+            font-size: 30px;
+            font-weight: 600;
+            color: white;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.06);
+            transition: border-color 0.2s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 0;
+            border: 3.33333333334px solid #ccc;
+            z-index: 10;
+        }
+
+        #exportButton:hover {
+            background-color: #ffffff;
+            border-color: #666666;
+            transform: translateY(-2px);
+             box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+
+        #exportButton img {
+            width: 40px;
+            height: 40px;
+           /* filter: grayscale(0) brightness(0) contrast(100%); */ /* Removed filter */
+        }
+        .tag-wrapper {
+            margin-top: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white p-8 rounded-lg  text-center">
+        <label for="textInput" class="block  text-sm  mb-2" style="font-size: 18px;">Enter Text:</label>
+        <input type="text" id="textInput" placeholder="Type something..." class="shadow appearance-none border rounded  text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4">
+        <div id="color-select">
+            <div class="color-option selected" data-bg="#f0f3f4" data-text="#666666" style="background-color: #f0f3f4;"></div>
+            <div class="color-option" data-bg="#fce8e6" data-text="#c52621" style="background-color: #fce8e6;"></div>  <div class="color-option" data-bg="#fdefe2" data-text="#fc7f0a" style="background-color: #fdefe2;"></div>  <div class="color-option" data-bg="#fef7e0" data-text="#fcc40a" style="background-color: #fef7e0;"></div>  <div class="color-option" data-bg="#e6f4ea" data-text="#016f38" style="background-color: #e6f4ea;"></div>  <div class="color-option" data-bg="#e5f7fb" data-text="#007787" style="background-color: #e5f7fb;"></div>  <div class="color-option" data-bg="#e7f0fe" data-text="#006bd3" style="background-color: #e7f0fe;"></div>  <div class="color-option" data-bg="#f3e8fd" data-text="#8625ca" style="background-color: #f3e8fd;"></div>
+            <div class="color-option" data-bg="#fde7f3" data-text="#b7076c" style="background-color: #fde7f3;"></div>
+            <div class="color-option" data-bg="#ffebff" data-text="#c454c4" style="background-color: #ffebff;"></div>
+             </div>
+        <div class="tag-wrapper">
+            <div class="tag-container">
+                <div id="tag">Your Text</div>
+                <button id="exportButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-download-icon lucide-download"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script>
+        const textInput = document.getElementById('textInput');
+        const tag = document.getElementById('tag');
+        const colorOptions = document.getElementsByClassName('color-option');
+        const exportButton = document.getElementById('exportButton');
+
+        const colorMap = {
+            '#f0f3f4': '#666666',
+            '#fce8e6': '#c52621',
+            '#fdefe2': '#fc7f0a',
+            '#fef7e0': '#fcc40a',
+            '#e6f4ea': '#016f38',
+            '#e5f7fb': '#007787',
+            '#e7f0fe': '#006bd3',
+            '#f3e8fd': '#8625ca',
+            '#fde7f3': '#b7076c',
+            '#ffebff': '#c454c4'
+        };
+
+        let selectedColor = '#f0f3f4';
+
+        textInput.addEventListener('input', function () {
+            const text = this.value;
+            tag.textContent = text;
+             tag.style.backgroundColor = selectedColor;
+            tag.style.color = colorMap[selectedColor];
+
+        });
+
+        for (let i = 0; i < colorOptions.length; i++) {
+            colorOptions[i].addEventListener('click', function () {
+                const bgColor = this.getAttribute('data-bg');
+                const textColor = this.getAttribute('data-text');
+
+                tag.style.backgroundColor = bgColor;
+                tag.style.color = textColor;
+                selectedColor = bgColor;
+
+                for (let j = 0; j < colorOptions.length; j++) {
+                    colorOptions[j].classList.remove('selected');
+                }
+                this.classList.add('selected');
+                 textInput.style.color =  '#666666';
+            });
+             if (colorOptions[i].getAttribute('data-bg') === selectedColor) {
+                colorOptions[i].classList.add('selected');
+            }
+        }
+
+        window.onload = function() {
+            const inputBottom = textInput.getBoundingClientRect().bottom;
+            const colorsTop = document.getElementById('color-select').getBoundingClientRect().top;
+            const colorsBottom = document.getElementById('color-select').getBoundingClientRect().bottom;
+            const tagTop = tag.getBoundingClientRect().top;
+
+            const inputToColorsDistance = colorsTop - inputBottom;
+            const colorsToTagDistance = tagTop - colorsBottom;
+
+            console.log("Distance from input to colors:", inputToColorsDistance, "px");
+            console.log("Distance from colors to tag:", colorsToTagDistance, "px");
+
+            const diff = Math.abs(colorsToTagDistance - 28);
+            if (diff > 1) {
+                console.error("The distance between colors and tag is not 28px!  Difference: ", diff, "px");
+                // Attempt to correct the margin.
+                const currentTagMarginTop = parseFloat(window.getComputedStyle(tag).marginTop);
+                const adjustment = 28 - colorsToTagDistance;
+                tag.style.marginTop = (currentTagMarginTop + adjustment) + "px";
+                console.log("Adjusted tag margin-top to:", tag.style.marginTop);
+            }
+        };
+
+        exportButton.addEventListener('click', function() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const tagElement = document.getElementById('tag');
+
+            // Calculate the size of the tag element, and increase it for better resolution
+            const width = tagElement.offsetWidth * 3;  // Triple the pixel density
+            const height = tagElement.offsetHeight * 3;
+
+            // Set the canvas dimensions to match the tag element
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.width = tagElement.offsetWidth + 'px'; //keep display size the same
+            canvas.style.height = tagElement.offsetHeight + 'px';
+
+
+            // Set a transparent background for the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Get the computed style of the tag element
+            const tagStyle = window.getComputedStyle(tagElement);
+            const borderRadius = parseInt(tagStyle.borderRadius);
+
+            // Draw the tag background onto the canvas with rounded corners
+            ctx.fillStyle = tagStyle.backgroundColor;
+            if (borderRadius > 0) {
+                // Create a rounded rectangle path
+                roundRect(ctx, 0, 0, width, height, borderRadius * 3); // Multiply borderRadius by 3 for increased size
+                ctx.fill();
+            } else {
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+
+
+            // Draw the tag text onto the canvas
+            ctx.font = tagStyle.font;
+            ctx.fillStyle = tagStyle.color;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const text = tagElement.textContent;
+            const x = canvas.width / 2;
+            const y = canvas.height / 2;
+            ctx.scale(3,3);
+            ctx.fillText(text, x/3, y/3);
+
+            // Create a download link for the PNG image
+            const link = document.createElement('a');
+            const safeText = text.replace(/[\/\\?%*:|"<>]/g, '').trim() || 'tag';
+            link.download = `${safeText}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.style.display = 'none';
+
+            // Add the link to the document
+            document.body.appendChild(link);
+
+            // Trigger the download
+            link.click();
+
+            // Remove the link from the document
+            document.body.removeChild(link);
+        });
+
+        /**
+         * Draws a rounded rectangle using the current fill style and stroke style.
+         *
+         * @param {CanvasRenderingContext2D} ctx The canvas rendering context.
+         * @param {number} x The x coordinate of the rectangle's starting point.
+         * @param {number} y The y coordinate of the rectangle's starting point.
+         * @param {number} width The width of the rectangle.
+         * @param {number} height The height of the rectangle.
+         * @param {number} radius The radius of the rounded corners.
+         */
+        function roundRect(ctx, x, y, width, height, radius) {
+          const r = Math.min(radius, width / 2, height / 2);
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.lineTo(x + width - r, y);
+          ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+          ctx.lineTo(x + width, y + height - r);
+          ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+          ctx.lineTo(x + r, y + height);
+          ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+          ctx.lineTo(x, y + r);
+          ctx.quadraticCurveTo(x, y, x + r, y);
+          ctx.closePath();
+        }
+
+        textInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                exportButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
