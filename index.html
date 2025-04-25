@@ -319,18 +319,25 @@
          * @param {number} radius The radius of the rounded corners.
          */
         function roundRect(ctx, x, y, width, height, radius) {
-          const r = Math.min(radius, width / 2, height / 2);
-          ctx.beginPath();
-          ctx.moveTo(x + r, y);
-          ctx.lineTo(x + width - r, y);
-          ctx.quadraticCurveTo(x + width, y, x + width, y + r);
-          ctx.lineTo(x + width, y + height - r);
-          ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-          ctx.lineTo(x + r, y + height);
-          ctx.quadraticCurveTo(x, y + height, x, y + height - r);
-          ctx.lineTo(x, y + r);
-          ctx.quadraticCurveTo(x, y, x + r, y);
-          ctx.closePath();
+            const r = Math.min(radius, width / 2, height / 2);
+            // округление радиуса
+            const roundX = Math.round(x * 3);
+            const roundY = Math.round(y * 3);
+            const roundWidth = Math.round(width * 3);
+            const roundHeight = Math.round(height * 3);
+            const roundR = Math.round(r * 3);
+
+            ctx.beginPath();
+            ctx.moveTo(roundX + roundR, roundY);
+            ctx.lineTo(roundX + roundWidth - roundR, roundY);
+            ctx.quadraticCurveTo(roundX + roundWidth, roundY, roundX + roundWidth, roundY + roundR);
+            ctx.lineTo(roundX + roundWidth, roundY + roundHeight - roundR);
+            ctx.quadraticCurveTo(roundX + roundWidth, roundY + roundHeight, roundX + roundWidth - roundR, roundY + roundHeight);
+            ctx.lineTo(roundX + roundR, roundY + roundHeight);
+            ctx.quadraticCurveTo(roundX, roundY + roundHeight, roundX, roundY + roundHeight - roundR);
+            ctx.lineTo(roundX, roundY + roundR);
+            ctx.quadraticCurveTo(roundX, roundY, roundX + roundR, roundY);
+            ctx.closePath();
         }
 
         textInput.addEventListener('keypress', function(e) {
