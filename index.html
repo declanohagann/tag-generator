@@ -265,6 +265,9 @@
             // Get the computed style of the tag element
             const tagStyle = window.getComputedStyle(tagElement);
             const borderRadius = parseInt(tagStyle.borderRadius);
+            const font = tagStyle.font;
+            const color = tagStyle.color;
+
 
             // Draw the tag background onto the canvas with rounded corners
             ctx.fillStyle = tagStyle.backgroundColor;
@@ -278,8 +281,8 @@
 
 
             // Draw the tag text onto the canvas
-            ctx.font = tagStyle.font;
-            ctx.fillStyle = tagStyle.color;
+            ctx.font = font;
+            ctx.fillStyle = color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             const text = tagElement.textContent;
