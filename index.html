@@ -144,7 +144,6 @@
         #exportButton img {
             width: 40px;
             height: 40px;
-           /* filter: grayscale(0) brightness(0) contrast(100%); */ /* Removed filter */
         }
         .tag-wrapper {
             margin-top: 14px;
@@ -244,79 +243,64 @@
         };
 
         exportButton.addEventListener('click', function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
             const tagElement = document.getElementById('tag');
-
-            // Calculate the size of the tag element
+            
+            // Get computed style of the tag element to make sure we capture everything correctly
+            const tagStyle = window.getComputedStyle(tagElement);
+            
+            // This scale factor accounts for the 0.6 scale transform in your CSS
+            const scale = 1; // Use 1 to export at the actual size displayed
+            
+            // Get the actual dimensions including padding
             const width = Math.round(tagElement.offsetWidth);
             const height = Math.round(tagElement.offsetHeight);
-
-            // Set the canvas dimensions to match the tag element
+            
+            // Create a canvas with the exact dimensions
+            const canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
-            canvas.style.width = width + 'px';
-            canvas.style.height = height + 'px';
-
-
-            // Set a transparent background for the canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Get the computed style of the tag element
-            const tagStyle = window.getComputedStyle(tagElement);
+            const ctx = canvas.getContext('2d');
+            
+            // Get the styles we need
             const borderRadius = parseInt(tagStyle.borderRadius);
-            const font = tagStyle.font;
-            const color = tagStyle.color;
             const backgroundColor = tagStyle.backgroundColor;
-
-
-            // Draw the tag background onto the canvas with rounded corners
+            const color = tagStyle.color;
+            const fontWeight = tagStyle.fontWeight;
+            const fontSize = tagStyle.fontSize;
+            const fontFamily = tagStyle.fontFamily;
+            
+            // Clear canvas with a transparent background
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw rounded rectangle background
             ctx.fillStyle = backgroundColor;
-            if (borderRadius > 0) {
-                // Create a rounded rectangle path
-                roundRect(ctx, 0, 0, width, height, borderRadius);
-                ctx.fill();
-            } else {
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-            }
-
-
-            // Draw the tag text onto the canvas
-            ctx.font = font;
+            roundRect(ctx, 0, 0, width, height, borderRadius);
+            ctx.fill();
+            
+            // Configure text settings
+            ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
             ctx.fillStyle = color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            
+            // Draw the text in the center
             const text = tagElement.textContent;
-            const x = canvas.width / 2;
-            const y = canvas.height / 2;
-            ctx.fillText(text, x, y);
-
-            // Create a download link for the PNG image
+            ctx.fillText(text, width / 2, height / 2);
+            
+            // Create download link
             const link = document.createElement('a');
             const safeText = text.replace(/[\/\\?%*:|"<>]/g, '').trim() || 'tag';
             link.download = `${safeText}.png`;
             link.href = canvas.toDataURL('image/png');
-            link.style.display = 'none';
-
-            // Add the link to the document
+            
+            // Trigger download
             document.body.appendChild(link);
-
-            // Trigger the download
             link.click();
-
-            // Remove the link from the document
             document.body.removeChild(link);
         });
 
         /**
          * Draws a rounded rectangle using the current fill style and stroke style.
-         *
-         * @param {CanvasRenderingContext2D} ctx The canvas rendering context.
-         * @param {number} x The x coordinate of the rectangle's starting point.
-         * @param {number} y The y coordinate of the rectangle's starting point.
-         * @param {number} width The width of the rectangle.
-         * @param {number} height The height of the rectangle.
-         * @param {number} radius The radius of the rounded corners.
          */
         function roundRect(ctx, x, y, width, height, radius) {
             const r = Math.min(radius, width / 2, height / 2);
