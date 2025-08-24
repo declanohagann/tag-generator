@@ -144,6 +144,7 @@
         #exportButton img {
             width: 40px;
             height: 40px;
+           /* filter: grayscale(0) brightness(0) contrast(100%); */ /* Removed filter */
         }
         .tag-wrapper {
             margin-top: 14px;
@@ -157,9 +158,15 @@
         <input type="text" id="textInput" placeholder="Type something..." class="shadow appearance-none border rounded  text-gray-700 leading-tight focus:outline-none focus:shadow-outline mb-4">
         <div id="color-select">
             <div class="color-option selected" data-bg="#f0f3f4" data-text="#666666" style="background-color: #f0f3f4;"></div>
-            <div class="color-option" data-bg="#fce8e6" data-text="#c52621" style="background-color: #fce8e6;"></div>  <div class="color-option" data-bg="#fdefe2" data-text="#fc7f0a" style="background-color: #fdefe2;"></div>  <div class="color-option" data-bg="#fef7e0" data-text="#fcc40a" style="background-color: #fef7e0;"></div>  <div class="color-option" data-bg="#e6f4ea" data-text="#016f38" style="background-color: #e6f4ea;"></div>  <div class="color-option" data-bg="#e5f7fb" data-text="#007787" style="background-color: #e5f7fb;"></div>  <div class="color-option" data-bg="#e7f0fe" data-text="#006bd3" style="background-color: #e7f0fe;"></div>  <div class="color-option" data-bg="#f3e8fd" data-text="#8625ca" style="background-color: #f3e8fd;"></div>
+            <div class="color-option" data-bg="#fce8e6" data-text="#c52621" style="background-color: #fce8e6;"></div> 
+            <div class="color-option" data-bg="#fdefe2" data-text="#fc7f0a" style="background-color: #fdefe2;"></div> 
+            <div class="color-option" data-bg="#fef7e0" data-text="#fcc40a" style="background-color: #fef7e0;"></div> 
+            <div class="color-option" data-bg="#e6f4ea" data-text="#016f38" style="background-color: #e6f4ea;"></div> 
+            <div class="color-option" data-bg="#e5f7fb" data-text="#007787" style="background-color: #e5f7fb;"></div> 
+            <div class="color-option" data-bg="#e3f2fc" data-text="#004870" style="background-color: #e3f2fc;"></div>
+            <div class="color-option" data-bg="#e7f0fe" data-text="#006bd3" style="background-color: #e7f0fe;"></div> 
+            <div class="color-option" data-bg="#f3e8fd" data-text="#8625ca" style="background-color: #f3e8fd;"></div>
             <div class="color-option" data-bg="#fde7f3" data-text="#b7076c" style="background-color: #fde7f3;"></div>
-            <div class="color-option" data-bg="#ffebff" data-text="#c454c4" style="background-color: #ffebff;"></div>
              </div>
         <div class="tag-wrapper">
             <div class="tag-container">
@@ -219,103 +226,45 @@
             }
         }
 
-        window.onload = function() {
-            const inputBottom = textInput.getBoundingClientRect().bottom;
-            const colorsTop = document.getElementById('color-select').getBoundingClientRect().top;
-            const colorsBottom = document.getElementById('color-select').getBoundingClientRect().bottom;
-            const tagTop = tag.getBoundingClientRect().top;
-
-            const inputToColorsDistance = colorsTop - inputBottom;
-            const colorsToTagDistance = tagTop - colorsBottom;
-
-            console.log("Distance from input to colors:", inputToColorsDistance, "px");
-            console.log("Distance from colors to tag:", colorsToTagDistance, "px");
-
-            const diff = Math.abs(colorsToTagDistance - 28);
-            if (diff > 1) {
-                console.error("The distance between colors and tag is not 28px!  Difference: ", diff, "px");
-                // Attempt to correct the margin.
-                const currentTagMarginTop = parseFloat(window.getComputedStyle(tag).marginTop);
-                const adjustment = 28 - colorsToTagDistance;
-                tag.style.marginTop = (currentTagMarginTop + adjustment) + "px";
-                console.log("Adjusted tag margin-top to:", tag.style.marginTop);
-            }
-        };
-
+        // The export function now creates a native SVG
         exportButton.addEventListener('click', function() {
             const tagElement = document.getElementById('tag');
+            const style = window.getComputedStyle(tagElement);
             
-            // Get computed style of the tag element to make sure we capture everything correctly
-            const tagStyle = window.getComputedStyle(tagElement);
-            
-            // This scale factor accounts for the 0.6 scale transform in your CSS
-            const scale = 1; // Use 1 to export at the actual size displayed
-            
-            // Get the actual dimensions including padding
-            const width = Math.round(tagElement.offsetWidth);
-            const height = Math.round(tagElement.offsetHeight);
-            
-            // Create a canvas with the exact dimensions
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            
-            // Get the styles we need
-            const borderRadius = parseInt(tagStyle.borderRadius);
-            const backgroundColor = tagStyle.backgroundColor;
-            const color = tagStyle.color;
-            const fontWeight = tagStyle.fontWeight;
-            const fontSize = tagStyle.fontSize;
-            const fontFamily = tagStyle.fontFamily;
-            
-            // Clear canvas with a transparent background
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw rounded rectangle background
-            ctx.fillStyle = backgroundColor;
-            roundRect(ctx, 0, 0, width, height, borderRadius);
-            ctx.fill();
-            
-            // Configure text settings
-            ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
-            ctx.fillStyle = color;
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            
-            // Draw the text in the center
+            // Get dimensions and styles for the SVG
+            const width = tagElement.offsetWidth;
+            const height = tagElement.offsetHeight;
             const text = tagElement.textContent;
-            ctx.fillText(text, width / 2, height / 2);
+            const fontSize = style.fontSize;
+            const fontWeight = style.fontWeight;
+            const color = style.color;
+            const backgroundColor = style.backgroundColor;
+            const borderRadius = style.borderRadius;
             
-            // Create download link
+            // Create the SVG markup
+            const svgString = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+                    <rect width="100%" height="100%" rx="${borderRadius}" fill="${backgroundColor}"/>
+                    <text x="50%" y="50%" dy="0.35em" text-anchor="middle" style="font-family: 'SF Pro Display', sans-serif; font-weight: ${fontWeight}; font-size: ${fontSize}; fill: ${color};">${text}</text>
+                </svg>
+            `;
+            
+            // Create a download link for the SVG
+            const blob = new Blob([svgString], {type: "image/svg+xml"});
+            const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             const safeText = text.replace(/[\/\\?%*:|"<>]/g, '').trim() || 'tag';
-            link.download = `${safeText}.png`;
-            link.href = canvas.toDataURL('image/png');
             
-            // Trigger download
+            link.download = `${safeText}.svg`;
+            link.href = url;
+            link.style.display = 'none';
+
+            // Trigger the download
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            URL.revokeObjectURL(url);
         });
-
-        /**
-         * Draws a rounded rectangle using the current fill style and stroke style.
-         */
-        function roundRect(ctx, x, y, width, height, radius) {
-            const r = Math.min(radius, width / 2, height / 2);
-            ctx.beginPath();
-            ctx.moveTo(x + r, y);
-            ctx.lineTo(x + width - r, y);
-            ctx.quadraticCurveTo(x + width, y, x + width, y + r);
-            ctx.lineTo(x + width, y + height - r);
-            ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-            ctx.lineTo(x + r, y + height);
-            ctx.quadraticCurveTo(x, y + height, x, y + height - r);
-            ctx.lineTo(x, y + r);
-            ctx.quadraticCurveTo(x, y, x + r, y);
-            ctx.closePath();
-        }
 
         textInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -325,4 +274,5 @@
     </script>
 </body>
 </html>
+
 
